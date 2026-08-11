@@ -1,0 +1,1 @@
+If you created a fresh Flutter project instead of using the supplied Android folder, copy the BLE permissions from android/app/src/main/AndroidManifest.xml into your generated manifest. Keep the rest of the Flutter-generated Android project files because Flutter manages those files.
