@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "329415771135",
+    "project_id": "women-safety-badge",
+    "storage_bucket": "women-safety-badge.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:329415771135:android:a9281febd452254ace5dca",
+        "android_client_info": {
+          "package_name": "com.example.smart_safety_badge"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBgfXZGuH9bnTIIx0RINUZ1UMWcYCIVZOA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -5,9 +5,8 @@ class AppConstants {
   // 150 BPM is NOT a medical diagnosis; it is the badge alert threshold.
   static const int heartRateThreshold = 150;
 
-  // Start in demo mode so the project runs before Firebase is configured.
-  // After running `flutterfire configure`, set this to true.
-  static const bool useFirebase = false;
+  // Enabled Firebase integration.
+  static const bool useFirebase = true;
 
   // Generic BLE UUIDs. Change these to match the ESP32 firmware.
   static const String serviceUuid =

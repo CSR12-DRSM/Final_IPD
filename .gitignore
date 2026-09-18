@@ -11,3 +11,14 @@ macos/Pods/
 *.iml
 .idea/
 .DS_Store
+
+# Node temporary files
+node_modules/
+node.exe
+npm
+npm.cmd
+npm.ps1
+npx
+npx.cmd
+npx.ps1
+nodevars.bat

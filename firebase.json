@@ -1,5 +1,1 @@
-{
-  "firestore": {
-    "rules": "firestore.rules"
-  }
-}
+{"firestore":{"rules":"firestore.rules"},"flutter":{"platforms":{"android":{"default":{"projectId":"women-safety-badge","appId":"1:329415771135:android:a9281febd452254ace5dca","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"women-safety-badge","configurations":{"android":"1:329415771135:android:a9281febd452254ace5dca","ios":"1:329415771135:ios:09221c6a3825d921ce5dca"}}}}}}

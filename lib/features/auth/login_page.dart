@@ -17,18 +17,24 @@ class _LoginPageState extends State<LoginPage> {
   final auth = AuthService();
   bool obscure = true;
   bool loading = false;
+  bool isSignUp = false;
 
-  Future<void> _login() async {
+  Future<void> _submit() async {
     if (email.text.trim().isEmpty || password.text.isEmpty) {
       _message('Enter email and password.');
       return;
     }
     setState(() => loading = true);
     try {
-      await auth.login(email.text, password.text);
+      if (isSignUp) {
+        await auth.signUp(email.text, password.text);
+        _message('Account created successfully!');
+      } else {
+        await auth.login(email.text, password.text);
+      }
       widget.onLogin();
     } catch (e) {
-      _message('Login failed: ${e.toString()}');
+      _message('${isSignUp ? "Sign up" : "Login"} failed: ${e.toString()}');
     } finally {
       if (mounted) setState(() => loading = false);
     }
@@ -70,9 +76,9 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  const Text(
-                    'Login',
-                    style: TextStyle(
+                  Text(
+                    isSignUp ? 'Create Account' : 'Login',
+                    style: const TextStyle(
                       fontSize: 30,
                       fontWeight: FontWeight.w700,
                       color: AppTheme.navy,
@@ -105,12 +111,12 @@ class _LoginPageState extends State<LoginPage> {
                     width: double.infinity,
                     height: 52,
                     child: FilledButton(
-                      onPressed: loading ? null : _login,
+                      onPressed: loading ? null : _submit,
                       child: loading
-                          ? const CircularProgressIndicator()
-                          : const Text(
-                              'Login',
-                              style: TextStyle(fontSize: 17),
+                          ? const CircularProgressIndicator(color: Colors.white)
+                          : Text(
+                              isSignUp ? 'Sign Up' : 'Login',
+                              style: const TextStyle(fontSize: 17),
                             ),
                     ),
                   ),
@@ -152,29 +158,30 @@ class _LoginPageState extends State<LoginPage> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  TextButton(
-                    onPressed: () async {
-                      if (email.text.trim().isEmpty) {
-                        _message('Enter your email first.');
-                        return;
-                      }
-                      await auth.resetPassword(email.text);
-                      _message('Password reset request sent.');
-                    },
-                    child: const Text('Forgot password?'),
-                  ),
+                  if (!isSignUp)
+                    TextButton(
+                      onPressed: () async {
+                        if (email.text.trim().isEmpty) {
+                          _message('Enter your email first.');
+                          return;
+                        }
+                        await auth.resetPassword(email.text);
+                        _message('Password reset request sent.');
+                      },
+                      child: const Text('Forgot password?'),
+                    ),
                   const SizedBox(height: 12),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text("Don't have an account? "),
+                      Text(isSignUp
+                          ? "Already have an account? "
+                          : "Don't have an account? "),
                       GestureDetector(
-                        onTap: () => _message(
-                          'Create the user in Firebase Authentication, or add a registration screen.',
-                        ),
-                        child: const Text(
-                          'Sign Up',
-                          style: TextStyle(
+                        onTap: () => setState(() => isSignUp = !isSignUp),
+                        child: Text(
+                          isSignUp ? 'Login' : 'Sign Up',
+                          style: const TextStyle(
                             color: AppTheme.blue,
                             fontWeight: FontWeight.w700,
                           ),
