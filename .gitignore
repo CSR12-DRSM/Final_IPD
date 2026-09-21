@@ -7,6 +7,7 @@ android/app/debug/
 android/app/profile/
 android/app/release/
 ios/Pods/
+ios/Flutter/ephemeral/
 macos/Pods/
 *.iml
 .idea/

@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 
 import 'core/constants.dart';
 import 'core/theme.dart';
 import 'features/auth/login_page.dart';
+import 'services/auth_service.dart';
 import 'widgets/badge_logo.dart';
 
 Future<void> main() async {
@@ -44,16 +46,36 @@ class _Entry extends StatefulWidget {
 }
 
 class _EntryState extends State<_Entry> {
-  bool loggedIn = false;
+  final _authService = AuthService();
 
   @override
   Widget build(BuildContext context) {
-    if (!loggedIn) {
-      return LoginPage(onLogin: () => setState(() => loggedIn = true));
-    }
-    return GuardianShell(onLogout: () => setState(() => loggedIn = false));
+    return StreamBuilder<User?>(
+      stream: _authService.authStateChanges,
+      initialData: _authService.currentUser,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting &&
+            !snapshot.hasData) {
+          return const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
+        final user = snapshot.data;
+        if (user == null) {
+          return LoginPage(onLogin: () {});
+        }
+        return GuardianShell(
+          onLogout: () async {
+            await _authService.logout();
+          },
+        );
+      },
+    );
   }
 }
+
 
 class GuardianAlert {
   GuardianAlert({
@@ -425,7 +447,7 @@ class _BottomNav extends StatelessWidget {
 }
 
 class _GuardianHeader extends StatelessWidget {
-  const _GuardianHeader({this.title = 'Guardian', this.showShield = true});
+  const _GuardianHeader({this.title = 'Guardian'}) : showShield = true;
   final String title;
   final bool showShield;
 
@@ -519,7 +541,7 @@ class HomeView extends StatelessWidget {
               Text(
                   'Your device stays active as long as it has battery. It never turns off on its own.',
                   style: TextStyle(
-                      color: Colors.white.withOpacity(.66),
+                      color: Colors.white.withValues(alpha: .66),
                       fontSize: 15,
                       height: 1.45)),
               const SizedBox(height: 20),
@@ -621,7 +643,7 @@ class HomeView extends StatelessWidget {
                         : const Color(0xFFE32945),
                     boxShadow: [
                       BoxShadow(
-                          color: AppTheme.red.withOpacity(.24),
+                          color: AppTheme.red.withValues(alpha: .24),
                           blurRadius: 28,
                           spreadRadius: holdingSos ? 12 : 3)
                     ]),
@@ -894,7 +916,7 @@ class _AlertCardState extends State<_AlertCard> {
                 width: a.isNew ? 2 : 0),
             boxShadow: [
               BoxShadow(
-                  color: Colors.black.withOpacity(.035),
+                  color: Colors.black.withValues(alpha: .035),
                   blurRadius: 10,
                   offset: const Offset(0, 4))
             ]),
@@ -1108,7 +1130,7 @@ class _RecordingCard extends StatelessWidget {
           _Pill(
             text: tag,
             color: tagColor,
-            bg: tagColor.withOpacity(.10),
+            bg: tagColor.withValues(alpha: .10),
           ),
           const SizedBox(height: 18),
           SizedBox(
@@ -1571,7 +1593,7 @@ class _WhiteCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(26),
           boxShadow: [
             BoxShadow(
-                color: Colors.black.withOpacity(.045),
+                color: Colors.black.withValues(alpha: .045),
                 blurRadius: 12,
                 offset: const Offset(0, 4))
           ]),
@@ -1588,7 +1610,7 @@ class _StatusTile extends StatelessWidget {
   Widget build(BuildContext context) => Container(
       height: 122,
       decoration: BoxDecoration(
-          color: Colors.white.withOpacity(.10),
+          color: Colors.white.withValues(alpha: .10),
           borderRadius: BorderRadius.circular(20)),
       padding: const EdgeInsets.all(14),
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -1602,7 +1624,7 @@ class _StatusTile extends StatelessWidget {
         const SizedBox(height: 3),
         Text(label,
             style:
-                TextStyle(color: Colors.white.withOpacity(.58), fontSize: 13.5))
+                TextStyle(color: Colors.white.withValues(alpha: .58), fontSize: 13.5))
       ]));
 }
 
@@ -1664,10 +1686,12 @@ class _MapPainter extends CustomPainter {
     final p = Paint()
       ..color = const Color(0xFFD6DDE7)
       ..strokeWidth = 1;
-    for (double x = 0; x < size.width; x += 30)
+    for (double x = 0; x < size.width; x += 30) {
       canvas.drawLine(Offset(x, 0), Offset(x, size.height), p);
-    for (double y = 0; y < size.height; y += 30)
+    }
+    for (double y = 0; y < size.height; y += 30) {
       canvas.drawLine(Offset(0, y), Offset(size.width, y), p);
+    }
     final road = Paint()
       ..color = Colors.white
       ..strokeWidth = 13

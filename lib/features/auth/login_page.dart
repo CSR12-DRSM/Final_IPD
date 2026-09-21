@@ -34,13 +34,16 @@ class _LoginPageState extends State<LoginPage> {
       }
       widget.onLogin();
     } catch (e) {
-      _message('${isSignUp ? "Sign up" : "Login"} failed: ${e.toString()}');
+      final msg = e.toString().replaceFirst('Exception: ', '');
+      _message(msg);
     } finally {
       if (mounted) setState(() => loading = false);
     }
   }
 
   void _message(String text) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
   }
 
@@ -165,8 +168,13 @@ class _LoginPageState extends State<LoginPage> {
                           _message('Enter your email first.');
                           return;
                         }
-                        await auth.resetPassword(email.text);
-                        _message('Password reset request sent.');
+                        try {
+                          await auth.resetPassword(email.text);
+                          _message('Password reset email sent to ${email.text.trim()}.');
+                        } catch (e) {
+                          final msg = e.toString().replaceFirst('Exception: ', '');
+                          _message(msg);
+                        }
                       },
                       child: const Text('Forgot password?'),
                     ),
