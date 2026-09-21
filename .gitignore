@@ -13,6 +13,10 @@ macos/Pods/
 .idea/
 .DS_Store
 
+# Windows Flutter Swift PM workaround backups
+.ios_backup/
+.macos_backup/
+
 # Node temporary files
 node_modules/
 node.exe
@@ -23,3 +27,5 @@ npx
 npx.cmd
 npx.ps1
 nodevars.bat
+run_chrome.bat
+
